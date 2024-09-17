@@ -15,11 +15,11 @@ public class DemoSecurityConfig {
 
     @Bean
     public InMemoryUserDetailsManager userDetailsManager(){
-        UserDetails john = User.builder()
-                .username("john")
+        UserDetails jack = User.builder()
+                .username("jack")
                 .password("{noop}test")
                 .build();
-        UserDetails jack = User.builder()
+        UserDetails john = User.builder()
                 .username("john")
                 .password("{noop}test123")
                 .roles("EMPLOYEE")
