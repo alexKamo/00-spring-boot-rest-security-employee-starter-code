@@ -22,30 +22,30 @@ public class DemoSecurityConfig {
         return new JdbcUserDetailsManager(dataSource);
     }
 
-    @Bean
-    public InMemoryUserDetailsManager userDetManager(){
-        UserDetails jack = User.builder()
-                .username("jack")
-                .password("{noop}test")
-                .build();
-        UserDetails john = User.builder()
-                .username("john")
-                .password("{noop}test123")
-                .roles("EMPLOYEE")
-                .build();
-        UserDetails mary = User.builder()
-                .username("mary")
-                .password("{noop}test123")
-                .roles("EMPLOYEE","MANAGER")
-                .build();
-        UserDetails susan = User.builder()
-                .username("susan")
-                .password("{noop}test123")
-                .roles("EMPLOYEE","MANAGER","ADMIN")
-                .build();
-        return new InMemoryUserDetailsManager(john,mary,susan,jack);
-    }
-
+//    @Bean
+//    public InMemoryUserDetailsManager userDetManager(){
+//        UserDetails jack = User.builder()
+//                .username("jack")
+//                .password("{noop}test")
+//                .build();
+//        UserDetails john = User.builder()
+//                .username("john")
+//                .password("{noop}test123")
+//                .roles("EMPLOYEE")
+//                .build();
+//        UserDetails mary = User.builder()
+//                .username("mary")
+//                .password("{noop}test123")
+//                .roles("EMPLOYEE","MANAGER")
+//                .build();
+//        UserDetails susan = User.builder()
+//                .username("susan")
+//                .password("{noop}test123")
+//                .roles("EMPLOYEE","MANAGER","ADMIN")
+//                .build();
+//        return new InMemoryUserDetailsManager(john,mary,susan,jack);
+//    }
+//
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.authorizeHttpRequests(configurer ->
@@ -56,6 +56,7 @@ public class DemoSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/employees").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/api/employees/**").hasRole("ADMIN"));
         http.httpBasic(Customizer.withDefaults());
+        http.csrf(csrf -> csrf.disable());
         return http.build();
     }
 
