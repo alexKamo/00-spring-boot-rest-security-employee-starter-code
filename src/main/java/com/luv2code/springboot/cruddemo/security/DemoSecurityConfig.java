@@ -17,10 +17,20 @@ import javax.sql.DataSource;
 @Configuration
 public class DemoSecurityConfig {
 
+
     @Bean
-    public UserDetailsManager userDetailsManager(DataSource dataSource){
-        return new JdbcUserDetailsManager(dataSource);
+    public UserDetailsManager userDetailsManager(DataSource dataSource) {
+        JdbcUserDetailsManager theUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+        theUserDetailsManager.setUsersByUsernameQuery("select user_id, pw, active from members where user_id=?");
+        theUserDetailsManager.setAuthoritiesByUsernameQuery("select user_id, role from roles where user_id=?");
+        return theUserDetailsManager;
     }
+
+
+//    @Bean
+//    public UserDetailsManager userDetailsManager(DataSource dataSource){
+//        return new JdbcUserDetailsManager(dataSource);
+//    }
 
 //    @Bean
 //    public InMemoryUserDetailsManager userDetManager(){
@@ -50,12 +60,14 @@ public class DemoSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.authorizeHttpRequests(configurer ->
                 configurer
+                        .requestMatchers(HttpMethod.GET,"/").hasAnyRole("USER","EMPLOYEE")
                         .requestMatchers(HttpMethod.GET,"/api/employees").hasRole("EMPLOYEE")
                         .requestMatchers(HttpMethod.GET, "/api/employees/**").hasRole("EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/api/employees").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/api/employees").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/api/employees/**").hasRole("ADMIN"));
         http.httpBasic(Customizer.withDefaults());
+        //disable Cross Site Request Forgery (CSRF)
         http.csrf(csrf -> csrf.disable());
         return http.build();
     }
